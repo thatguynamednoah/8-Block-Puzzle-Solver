@@ -27,6 +27,10 @@ int main () {
         algorithm = SelectAlgorithm();
     }
 
+    if (algorithm == 1) {
+        
+    }
+
     return 0;
 }
 
