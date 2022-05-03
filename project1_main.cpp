@@ -3,6 +3,58 @@
 using namespace std;
 
 vector<vector<int>> matrix { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} }; // https://www.geeksforgeeks.org/2d-vector-in-cpp-with-user-defined-size/
+
+// m rows x n columns
+class Node {
+    vector<vector<int>> currPuzzle;
+    Node *parent;
+    pair<unsigned, unsigned> zero_pos; // zero_pos.first = row (y), zero_pos.second = column (x)
+    int shiftTemp;
+
+    // Shift functions return true if shift occurs
+    bool shiftUp () {
+        if (zero_pos.first != 0) {
+            shiftTemp = currPuzzle.at(zero_pos.first - 1).at(zero_pos.second);
+            currPuzzle.at(zero_pos.first - 1).at(zero_pos.second) = 0;
+            currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
+            zero_pos.first = zero_pos.first - 1;
+            return true;
+        }
+        return false;
+    }
+    bool shiftDown () {
+        if (zero_pos.first != 2) {
+            shiftTemp = currPuzzle.at(zero_pos.first + 1).at(zero_pos.second);
+            currPuzzle.at(zero_pos.first + 1).at(zero_pos.second) = 0;
+            currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
+            zero_pos.first = zero_pos.first + 1;
+            return true;
+        }
+        return false;
+    }
+    bool shiftLeft () {
+        if (zero_pos.second != 0) {
+            shiftTemp = currPuzzle.at(zero_pos.first).at(zero_pos.second - 1);
+            currPuzzle.at(zero_pos.first).at(zero_pos.second - 1) = 0;
+            currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
+            zero_pos.second = zero_pos.second - 1;
+            return true;
+        }
+        return false;
+    }
+    bool shiftRight () {
+        if (zero_pos.second != 2) {
+            shiftTemp = currPuzzle.at(zero_pos.first).at(zero_pos.second + 1);
+            currPuzzle.at(zero_pos.first).at(zero_pos.second + 1) = 0;
+            currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
+            zero_pos.second = zero_pos.second + 1;
+            return true;
+        }
+        return false;
+    }
+    
+};
+
 void DisplayIntro ();
 int GetPuzzleType ();
 void GetPuzzleInput ();
@@ -10,6 +62,10 @@ void VerifyInput ();
 bool RepeatedDigit (vector<int>);
 void DisplayMatrix ();
 int SelectAlgorithm ();
+
+void UniformCostSearch ();
+void A_MisplacedSearch ();
+void A_EuclideanSearch ();
 
 int main () {
     DisplayIntro();
@@ -28,10 +84,20 @@ int main () {
     }
 
     if (algorithm == 1) {
-        
+        UniformCostSearch();
+    }
+    if (algorithm == 2) {
+        A_MisplacedSearch();
+    }
+    if (algorithm == 3) {
+        A_EuclideanSearch();
     }
 
     return 0;
+}
+
+void UniformCostSearch () {
+
 }
 
 void DisplayIntro () {
