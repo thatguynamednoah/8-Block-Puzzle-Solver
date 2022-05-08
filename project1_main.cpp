@@ -58,8 +58,6 @@ class Node {
                 currPuzzle.at(zero_pos.first - 1).at(zero_pos.second) = 0;
                 currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
                 zero_pos.first = zero_pos.first - 1;
-                g_of_n += 1;
-                f_of_n = h_of_n + g_of_n;
                 return true;
             }
             return false;
@@ -71,8 +69,6 @@ class Node {
                 currPuzzle.at(zero_pos.first + 1).at(zero_pos.second) = 0;
                 currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
                 zero_pos.first = zero_pos.first + 1;
-                g_of_n += 1;
-                f_of_n = h_of_n + g_of_n;
                 return true;
             }
             return false;
@@ -84,8 +80,6 @@ class Node {
                 currPuzzle.at(zero_pos.first).at(zero_pos.second - 1) = 0;
                 currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
                 zero_pos.second = zero_pos.second - 1;
-                g_of_n += 1;
-                f_of_n = h_of_n + g_of_n;
                 return true;
             }
             return false;
@@ -97,14 +91,10 @@ class Node {
                 currPuzzle.at(zero_pos.first).at(zero_pos.second + 1) = 0;
                 currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
                 zero_pos.second = zero_pos.second + 1;
-                g_of_n += 1;
-                f_of_n = h_of_n + g_of_n;
                 return true;
             }
             return false;
         }
-        
-        // void SetF_N(int);
 };
 
 void DisplayIntro ();
@@ -434,10 +424,6 @@ bool Node::isGoal () {
 // void Node::SetF_N(int num) {
 //     f_of_n = num;
 // }
-
-int Node::GetF_N() const {
-    return f_of_n;
-}
 
 vector<vector<int>> Node::GetPuzzleData () {
     return currPuzzle;
