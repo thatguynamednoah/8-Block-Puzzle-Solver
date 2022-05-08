@@ -7,72 +7,103 @@ using namespace std;
 // Contains all relevant state information
 class Node {
     private:
-        vector<vector<int>> currPuzzle { {1, 2, 3}, 
-                                         {4, 5, 6}, 
-                                         {7, 8, 0} };  // https://www.geeksforgeeks.org/2d-vector-in-cpp-with-user-defined-size/
+        vector<vector<int>> currPuzzle;
                                          
         // Node * parent;
         // vector<Node *> children;
         pair<unsigned, unsigned> zero_pos; // zero_pos.first = row (m), zero_pos.second = column (n)
-        int shiftTemp;
-        int g_of_n = 0;
-        int h_of_n = 0;
-        int f_of_n = 0;
-        char lastMove = ' ';        
-
-        // Shift functions return true if shift occurs
-        bool shiftUp () {
-            if (zero_pos.first != 0) {
-                shiftTemp = currPuzzle.at(zero_pos.first - 1).at(zero_pos.second);
-                currPuzzle.at(zero_pos.first - 1).at(zero_pos.second) = 0;
-                currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
-                zero_pos.first = zero_pos.first - 1;
-                return true;
-            }
-            return false;
-        }
-        bool shiftDown () {
-            if (zero_pos.first != 2) {
-                shiftTemp = currPuzzle.at(zero_pos.first + 1).at(zero_pos.second);
-                currPuzzle.at(zero_pos.first + 1).at(zero_pos.second) = 0;
-                currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
-                zero_pos.first = zero_pos.first + 1;
-                return true;
-            }
-            return false;
-        }
-        bool shiftLeft () {
-            if (zero_pos.second != 0) {
-                shiftTemp = currPuzzle.at(zero_pos.first).at(zero_pos.second - 1);
-                currPuzzle.at(zero_pos.first).at(zero_pos.second - 1) = 0;
-                currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
-                zero_pos.second = zero_pos.second - 1;
-                return true;
-            }
-            return false;
-        }
-        bool shiftRight () {
-        if (zero_pos.second != 2) {
-            shiftTemp = currPuzzle.at(zero_pos.first).at(zero_pos.second + 1);
-            currPuzzle.at(zero_pos.first).at(zero_pos.second + 1) = 0;
-            currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
-            zero_pos.second = zero_pos.second + 1;
-            return true;
-        }
-        return false;
-    }
+        // char lastMove = ' ';        
 
         // Verifying Legal Input on Puzzle
         void VerifyInput ();
         bool RepeatedDigit (vector<int>);
 
     public:
+        Node () {
+            currPuzzle = { {1, 2, 3}, 
+                           {4, 5, 6}, 
+                           {7, 8, 0} }; // https://www.geeksforgeeks.org/2d-vector-in-cpp-with-user-defined-size/
+            zero_pos.first = 2;
+            zero_pos.second = 2;
+        }
+        Node (vector<vector<int>> puzzleVals) {
+            currPuzzle = puzzleVals;
+            for (unsigned i = 0; i < 3; i++) {
+                for (unsigned j = 0; j < 3; j++) {
+                    if (currPuzzle.at(i).at(j) == 0) {
+                        zero_pos.first = i;
+                        zero_pos.second = j;
+                    }
+                }
+            }
+        }
+
+        int depth = 0;
+        int g_of_n = 0;
+        int h_of_n = 0;
+        int f_of_n = 0;
+        
         void SetPuzzleInput ();
         void DisplayMatrix ();
         bool isGoal ();
         void expandNode (Node *);
         int GetF_N () const;
-        const vector<vector<int>> GetPuzzleData ();
+        vector<vector<int>> GetPuzzleData ();
+
+        // Shift functions return true if shift occurs
+        bool shiftUp () {
+            int shiftTemp = 0;
+            if (zero_pos.first != 0) {
+                shiftTemp = currPuzzle.at(zero_pos.first - 1).at(zero_pos.second);
+                currPuzzle.at(zero_pos.first - 1).at(zero_pos.second) = 0;
+                currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
+                zero_pos.first = zero_pos.first - 1;
+                g_of_n += 1;
+                f_of_n = h_of_n + g_of_n;
+                return true;
+            }
+            return false;
+        }
+        bool shiftDown () {
+            int shiftTemp = 0;
+            if (zero_pos.first != 2) {
+                shiftTemp = currPuzzle.at(zero_pos.first + 1).at(zero_pos.second);
+                currPuzzle.at(zero_pos.first + 1).at(zero_pos.second) = 0;
+                currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
+                zero_pos.first = zero_pos.first + 1;
+                g_of_n += 1;
+                f_of_n = h_of_n + g_of_n;
+                return true;
+            }
+            return false;
+        }
+        bool shiftLeft () {
+            int shiftTemp = 0;
+            if (zero_pos.second != 0) {
+                shiftTemp = currPuzzle.at(zero_pos.first).at(zero_pos.second - 1);
+                currPuzzle.at(zero_pos.first).at(zero_pos.second - 1) = 0;
+                currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
+                zero_pos.second = zero_pos.second - 1;
+                g_of_n += 1;
+                f_of_n = h_of_n + g_of_n;
+                return true;
+            }
+            return false;
+        }
+        bool shiftRight () {
+            int shiftTemp = 0;
+            if (zero_pos.second != 2) {
+                shiftTemp = currPuzzle.at(zero_pos.first).at(zero_pos.second + 1);
+                currPuzzle.at(zero_pos.first).at(zero_pos.second + 1) = 0;
+                currPuzzle.at(zero_pos.first).at(zero_pos.second) = shiftTemp;
+                zero_pos.second = zero_pos.second + 1;
+                g_of_n += 1;
+                f_of_n = h_of_n + g_of_n;
+                return true;
+            }
+            return false;
+        }
+        
         // void SetF_N(int);
 };
 
@@ -86,12 +117,63 @@ void UniformCostSearch (Node *);
 void A_MisplacedSearch (Node *);
 void A_EuclideanSearch (Node *);
 
+// void TesterGo (Node * initNode) {
+//     cout << endl;
+
+//     initNode->shiftRight();
+//     initNode->DisplayMatrix();
+//     cout << endl;
+
+//     initNode->shiftLeft();
+//     initNode->DisplayMatrix();
+//     cout << endl;
+
+//     initNode->shiftRight();
+//     initNode->DisplayMatrix();
+//     cout << endl;
+
+//     initNode->shiftRight();
+//     initNode->DisplayMatrix();
+//     cout << endl;
+
+//     initNode->shiftDown();
+//     initNode->DisplayMatrix();
+//     cout << endl;
+
+//     initNode->shiftUp();
+//     initNode->DisplayMatrix();
+//     cout << endl;
+
+//     initNode->shiftDown();
+//     initNode->DisplayMatrix();
+//     cout << endl;
+
+//     initNode->shiftDown();
+//     initNode->DisplayMatrix();
+//     cout << endl;
+
+//     initNode->DisplayMatrix();
+//     if (initNode->isGoal()) {
+//             cout << "Goal Found!" << endl;
+//     }
+//     else {
+//         cout << "fail" << endl;
+//     }
+// }
+
 int main () {
+    // vector<vector<int>> thing = { {0, 1, 2}, 
+    //                               {4, 5, 3}, 
+    //                               {7, 8, 6} };
+    // Node * initNode = new Node(thing);
+    // initNode->DisplayMatrix();
+    // TesterGo(initNode);
+
     Node * initNode = new Node;
     DisplayIntro();
 
     int puzzleType = -1;
-    while (puzzleType < 0) {
+    while (puzzleType < 0 || puzzleType > 2) {
         puzzleType = GetPuzzleType();
     }
     if (puzzleType == 2) {
@@ -100,7 +182,7 @@ int main () {
 
     int algorithm = -1;
     initNode->DisplayMatrix();
-    while (algorithm < 0) {
+    while (algorithm < 0 || algorithm > 3) {
         algorithm = SelectAlgorithm();
     }
 
@@ -122,7 +204,7 @@ struct compare_nodes
 {
     bool operator() (const Node * lhs, const Node * rhs) const
     {
-        if (lhs->GetF_N() > rhs->GetF_N()) {
+        if (lhs->f_of_n > rhs->f_of_n) {
             return true;
         }
         return false;
@@ -137,22 +219,28 @@ void UniformCostSearch (Node * initNode) {
     list<Node *> frontierSet;
 
     frontier.push(initNode);
-    exploredSet.clear();
+    frontierSet.push_back(initNode);
+
     Node * currNode;
+    Node * expandedNodes[4];
 
     while(1) {
+        cout << frontier.size() << endl;
         if (frontier.empty()) {
             cout << "Failure: No goal found." << endl;
             break;
         }
 
         currNode = frontier.top();
-
+        cout << currNode->f_of_n << endl;
+        // currNode->DisplayMatrix();
+        // cout << "---" << endl;
         if (currNode->isGoal()) {
             cout << "Goal Found!" << endl;
             break;
         }
 
+        // Removing currNode from frontier
         list<Node *>::iterator it;
         Node * compareNode;
         for (it = frontierSet.begin(); it != frontierSet.end(); it++) {
@@ -162,10 +250,50 @@ void UniformCostSearch (Node * initNode) {
                 break;
             }
         }
-        
+
+        // Pushing non-goal node to explored set before expanding
         exploredSet.push_back(currNode);
 
-        // Expand Here
+        // Expanding Nodes
+        for (unsigned i = 0; i < 4; i++) {
+            expandedNodes[i] = new Node(currNode->GetPuzzleData());
+        }
+        cout << "Starting Expansion" << endl;
+        expandedNodes[0]->shiftUp();
+        expandedNodes[1]->shiftDown();
+        expandedNodes[2]->shiftLeft();
+        expandedNodes[3]->shiftRight();
+        cout << "End Expansion" << endl;
+
+        for (unsigned i = 0; i < 4; i++) {
+            cout << "Starting Frontier Set" << endl;
+            for (it = frontierSet.begin(); it != frontierSet.end(); it++) {
+                compareNode = *it;
+                if (compareNode->GetPuzzleData() == expandedNodes[i]->GetPuzzleData()) {
+                    delete expandedNodes[i];
+                    expandedNodes[i] = nullptr;
+                    break;
+                }
+            }
+            cout << "Ending Frontier Set" << endl;
+            cout << "Starting Explored Set" << endl;
+            for (it = exploredSet.begin(); it != exploredSet.end(); it++) {
+                compareNode = *it;
+                if (compareNode->GetPuzzleData() == expandedNodes[i]->GetPuzzleData()) {
+                    delete expandedNodes[i];
+                    expandedNodes[i] = nullptr;
+                    break;
+                }
+            }
+            cout << "Ending Explored Set" << endl;
+            if (expandedNodes[i] != nullptr) {
+                expandedNodes[i]->g_of_n = currNode->g_of_n + 1;
+                expandedNodes[i]->f_of_n = expandedNodes[i]->g_of_n + expandedNodes[i]->h_of_n;
+                frontier.push(expandedNodes[i]);
+                frontierSet.push_back(expandedNodes[i]);
+            }
+            cout << "End Add" << endl;
+        }
 
         frontier.pop();
     }
@@ -239,6 +367,8 @@ void Node::VerifyInput () {
         for (unsigned j = 0; j < 3; j++) {
             repeatCheck.push_back(currPuzzle.at(i).at(j));
             if (currPuzzle.at(i).at(j) == 0) {
+                zero_pos.first = i;
+                zero_pos.second = j;
                 hasEmpty = true;
             }
             if (currPuzzle.at(i).at(j) > 8 || currPuzzle.at(i).at(j) < 0) {
@@ -246,6 +376,7 @@ void Node::VerifyInput () {
                 DisplayMatrix();
                 cout << endl;
                 SetPuzzleInput();
+                return;
             };
         }
     }
@@ -285,11 +416,10 @@ void Node::DisplayMatrix () {
     }
 }
 
+const vector<vector<int>> solvedPuzzle { {1, 2, 3}, 
+                                         {4, 5, 6}, 
+                                         {7, 8, 0} };
 bool Node::isGoal () {
-    const vector<vector<int>> solvedPuzzle { {1, 2, 3}, 
-                                             {4, 5, 6}, 
-                                             {7, 8, 0} };
-
     for (unsigned i = 0; i < 3; i++) {
         for (unsigned j = 0; j < 3; j++) {
             // cout << "currPuzzle.at(i).at(j): " << currPuzzle.at(i).at(j) << " | " << "solvedPuzzle.at(i).at(j): " << solvedPuzzle.at(i).at(j) << endl;
@@ -309,6 +439,6 @@ int Node::GetF_N() const {
     return f_of_n;
 }
 
-const vector<vector<int>> Node::GetPuzzleData () {
+vector<vector<int>> Node::GetPuzzleData () {
     return currPuzzle;
 }
